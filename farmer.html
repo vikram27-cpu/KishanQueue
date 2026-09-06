@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KisanQueue - Farmer Dashboard</title>
+
+<!-- QR Code Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f7f2;
+    color:#1f2937;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+    background:#176b2c;
+    color:white;
+    padding:15px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#d7f5c8;
+}
+
+.language{
+    display:flex;
+    gap:5px;
+}
+
+.language button{
+    border:none;
+    background:#ffffff22;
+    color:white;
+    padding:7px 9px;
+    border-radius:7px;
+    font-size:12px;
+}
+
+.language button.active{
+    background:white;
+    color:#176b2c;
+}
+
+/* ================= MAIN ================= */
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px 15px 90px;
+}
+
+.welcome{
+    margin-bottom:20px;
+}
+
+.welcome h1{
+    font-size:25px;
+    color:#145c25;
+    margin-bottom:5px;
+}
+
+.welcome p{
+    color:#667085;
+}
+
+/* ================= ALERT ================= */
+
+.alert{
+    background:#e8f5e9;
+    border-left:5px solid #2e7d32;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:18px;
+}
+
+.alert strong{
+    color:#176b2c;
+}
+
+/* ================= TOKEN ================= */
+
+.token-card{
+    background:linear-gradient(135deg,#176b2c,#2e8b3d);
+    color:white;
+    border-radius:18px;
+    padding:25px 20px;
+    text-align:center;
+    box-shadow:0 5px 15px #0002;
+}
+
+.token-title{
+    font-size:14px;
+    opacity:.9;
+}
+
+.token-number{
+    font-size:42px;
+    font-weight:bold;
+    margin:8px 0;
+    letter-spacing:2px;
+}
+
+.token-info{
+    display:flex;
+    justify-content:space-around;
+    margin-top:20px;
+}
+
+.token-info div{
+    font-size:13px;
+}
+
+.token-info strong{
+    display:block;
+    font-size:17px;
+    margin-top:5px;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:18px;
+}
+
+.card{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    box-shadow:0 2px 8px #0001;
+}
+
+.card-icon{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.card h3{
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.card p{
+    color:#667085;
+    font-size:13px;
+}
+
+.big-number{
+    font-size:28px;
+    font-weight:bold;
+    color:#176b2c;
+}
+
+/* ================= QUEUE ================= */
+
+.section{
+    margin-top:22px;
+}
+
+.section-title{
+    font-size:20px;
+    color:#145c25;
+    margin-bottom:12px;
+}
+
+.queue-card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 2px 8px #0001;
+}
+
+.queue-position{
+    text-align:center;
+    font-size:35px;
+    font-weight:bold;
+    color:#176b2c;
+}
+
+.queue-label{
+    text-align:center;
+    color:#667085;
+    margin-bottom:15px;
+}
+
+.progress-bg{
+    width:100%;
+    height:13px;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress{
+    width:68%;
+    height:100%;
+    background:#4caf50;
+    transition:.5s;
+}
+
+.queue-details{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+    font-size:14px;
+}
+
+/* ================= STATUS ================= */
+
+.status-card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 2px 8px #0001;
+}
+
+.status-step{
+    display:flex;
+    align-items:center;
+    margin:15px 0;
+}
+
+.status-icon{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:#e8f5e9;
+    color:#176b2c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:12px;
+    font-weight:bold;
+}
+
+.status-step.active .status-icon{
+    background:#176b2c;
+    color:white;
+}
+
+.status-text strong{
+    display:block;
+    font-size:14px;
+}
+
+.status-text small{
+    color:#777;
+}
+
+/* ================= QR ================= */
+
+.qr-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 2px 8px #0001;
+}
+
+#qrcode{
+    display:flex;
+    justify-content:center;
+    margin:20px 0;
+}
+
+.qr-card button{
+    border:none;
+    background:#176b2c;
+    color:white;
+    padding:11px 20px;
+    border-radius:8px;
+}
+
+/* ================= PAYMENT ================= */
+
+.payment{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 2px 8px #0001;
+}
+
+.payment-row{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.payment-row:last-child{
+    border-bottom:none;
+}
+
+.paid{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+.pending{
+    color:#e65100;
+    font-weight:bold;
+}
+
+/* ================= BUTTON ================= */
+
+.action-btn{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#176b2c;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+}
+
+/* ================= BOTTOM NAV ================= */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:white;
+    height:65px;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    box-shadow:0 -2px 10px #0002;
+    z-index:200;
+}
+
+.bottom-nav button{
+    border:none;
+    background:none;
+    color:#777;
+    font-size:11px;
+}
+
+.bottom-nav button div{
+    font-size:21px;
+    margin-bottom:2px;
+}
+
+.bottom-nav button.active{
+    color:#176b2c;
+    font-weight:bold;
+}
+
+/* ================= LANGUAGE ================= */
+
+.lang{
+    display:none;
+}
+
+.lang.active{
+    display:inline;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+    .container{
+        padding:18px 12px 90px;
+    }
+
+    .navbar{
+        padding:13px 12px;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+
+    .grid{
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .token-number{
+        font-size:37px;
+    }
+
+    .welcome h1{
+        font-size:23px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 Kisan<span>Queue</span>
+    </div>
+
+    <div class="language">
+
+        <button id="enBtn"
+        class="active"
+        onclick="changeLanguage('en')">
+        EN
+        </button>
+
+        <button id="hiBtn"
+        onclick="changeLanguage('hi')">
+        हिंदी
+        </button>
+
+        <button id="mrBtn"
+        onclick="changeLanguage('mr')">
+        मराठी
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+<!-- WELCOME -->
+
+<div class="welcome">
+
+<h1>
+
+<span class="lang en active">
+👨‍🌾 Welcome, Farmer
+</span>
+
+<span class="lang hi">
+👨‍🌾 किसान जी, स्वागत है
+</span>
+
+<span class="lang mr">
+👨‍🌾 शेतकरी बांधव, स्वागत आहे
+</span>
+
+</h1>
+
+<p>
+
+<span class="lang en active">
+Here is your procurement status.
+</span>
+
+<span class="lang hi">
+यह आपकी खरीद की स्थिति है।
+</span>
+
+<span class="lang mr">
+ही तुमच्या खरेदीची स्थिती आहे.
+</span>
+
+</p>
+
+</div>
+
+
+<!-- ALERT -->
+
+<div class="alert">
+
+<strong>🔔
+
+<span class="lang en active">
+Your turn is approaching!
+</span>
+
+<span class="lang hi">
+आपकी बारी आने वाली है!
+</span>
+
+<span class="lang mr">
+तुमची पाळी लवकरच येणार आहे!
+</span>
+
+</strong>
+
+<p style="margin-top:5px;font-size:13px;">
+
+<span class="lang en active">
+Please reach the procurement centre within 15 minutes.
+</span>
+
+<span class="lang hi">
+कृपया 15 मिनट के अंदर खरीद केंद्र पहुँचें।
+</span>
+
+<span class="lang mr">
+कृपया 15 मिनिटांच्या आत खरेदी केंद्रावर पोहोचा.
+</span>
+
+</p>
+
+</div>
+
+
+<!-- ================= TOKEN ================= -->
+
+<div class="token-card">
+
+<div class="token-title">
+
+<span class="lang en active">
+YOUR DIGITAL TOKEN
+</span>
+
+<span class="lang hi">
+आपका डिजिटल टोकन
+</span>
+
+<span class="lang mr">
+तुमचा डिजिटल टोकन
+</span>
+
+</div>
+
+<div class="token-number" id="token">
+KQ-127
+</div>
+
+<p>🌾 Wheat • 450 kg</p>
+
+<div class="token-info">
+
+<div>
+<span class="lang en active">Queue Position</span>
+<span class="lang hi">कतार स्थिति</span>
+<span class="lang mr">रांगेतील स्थान</span>
+
+<strong id="position">7</strong>
+</div>
+
+<div>
+<span class="lang en active">Wait Time</span>
+<span class="lang hi">प्रतीक्षा समय</span>
+<span class="lang mr">प्रतीक्षा वेळ</span>
+
+<strong id="wait">22 min</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= QUICK INFO ================= -->
+
+<div class="grid">
+
+<div class="card">
+
+<div class="card-icon">📅</div>
+
+<h3>
+<span class="lang en active">Slot</span>
+<span class="lang hi">समय स्लॉट</span>
+<span class="lang mr">वेळ स्लॉट</span>
+</h3>
+
+<p>10:00 AM – 11:00 AM</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">📍</div>
+
+<h3>
+<span class="lang en active">Centre</span>
+<span class="lang hi">केंद्र</span>
+<span class="lang mr">केंद्र</span>
+</h3>
+
+<p>Krishi Procurement Centre</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">🌾</div>
+
+<h3>
+<span class="lang en active">Crop</span>
+<span class="lang hi">फसल</span>
+<span class="lang mr">पीक</span>
+</h3>
+
+<p>Wheat</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-icon">⚖️</div>
+
+<h3>
+<span class="lang en active">Quantity</span>
+<span class="lang hi">मात्रा</span>
+<span class="lang mr">प्रमाण</span>
+</h3>
+
+<p>450 kg</p>
+
+</div>
+
+</div>
+
+
+<!-- ================= LIVE QUEUE ================= -->
+
+<div class="section" id="queueSection">
+
+<h2 class="section-title">
+
+<span class="lang en active">📍 Live Queue</span>
+<span class="lang hi">📍 लाइव कतार</span>
+<span class="lang mr">📍 लाईव्ह रांग</span>
+
+</h2>
+
+<div class="queue-card">
+
+<div class="queue-position"
+id="queueNumber">
+7
+</div>
+
+<div class="queue-label">
+
+<span class="lang en active">
+Farmers ahead of you
+</span>
+
+<span class="lang hi">
+आपसे आगे किसान
+</span>
+
+<span class="lang mr">
+तुमच्या पुढे असलेले शेतकरी
+</span>
+
+</div>
+
+
+<div class="progress-bg">
+<div class="progress" id="progress"></div>
+</div>
+
+
+<div class="queue-details">
+
+<span>
+Currently Serving:
+<strong>KQ-120</strong>
+</span>
+
+<span>
+Your Token:
+<strong>KQ-127</strong>
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= PROCUREMENT STATUS ================= -->
+
+<div class="section">
+
+<h2 class="section-title">
+
+<span class="lang en active">
+🚜 Procurement Status
+</span>
+
+<span class="lang hi">
+🚜 खरीद स्थिति
+</span>
+
+<span class="lang mr">
+🚜 खरेदीची स्थिती
+</span>
+
+</h2>
+
+
+<div class="status-card">
+
+
+<div class="status-step active">
+
+<div class="status-icon">✓</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Booked</span>
+<span class="lang hi">बुक किया गया</span>
+<span class="lang mr">बुक केले</span>
+</strong>
+
+<small>Slot confirmed</small>
+
+</div>
+
+</div>
+
+
+<div class="status-step active">
+
+<div class="status-icon">✓</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Arrived</span>
+<span class="lang hi">पहुंच गए</span>
+<span class="lang mr">पोहोचले</span>
+</strong>
+
+<small>Centre arrival</small>
+
+</div>
+
+</div>
+
+
+<div class="status-step active">
+
+<div class="status-icon">✓</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Weighing</span>
+<span class="lang hi">वजन हो रहा है</span>
+<span class="lang mr">वजन सुरू आहे</span>
+</strong>
+
+<small>Crop weighing</small>
+
+</div>
+
+</div>
+
+
+<div class="status-step">
+
+<div class="status-icon">4</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Quality Check</span>
+<span class="lang hi">गुणवत्ता जांच</span>
+<span class="lang mr">गुणवत्ता तपासणी</span>
+</strong>
+
+<small>Pending</small>
+
+</div>
+
+</div>
+
+
+<div class="status-step">
+
+<div class="status-icon">5</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Accepted</span>
+<span class="lang hi">स्वीकृत</span>
+<span class="lang mr">स्वीकृत</span>
+</strong>
+
+<small>Pending</small>
+
+</div>
+
+</div>
+
+
+<div class="status-step">
+
+<div class="status-icon">₹</div>
+
+<div class="status-text">
+
+<strong>
+<span class="lang en active">Paid</span>
+<span class="lang hi">भुगतान</span>
+<span class="lang mr">पेमेंट</span>
+</strong>
+
+<small>Payment pending</small>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- ================= QR TOKEN ================= -->
+
+<div class="section">
+
+<h2 class="section-title">
+
+<span class="lang en active">
+🎟️ Digital QR Token
+</span>
+
+<span class="lang hi">
+🎟️ डिजिटल QR टोकन
+</span>
+
+<span class="lang mr">
+🎟️ डिजिटल QR टोकन
+</span>
+
+</h2>
+
+
+<div class="qr-card">
+
+<p>
+
+<span class="lang en active">
+Show this QR code at the procurement centre.
+</span>
+
+<span class="lang hi">
+खरीद केंद्र पर यह QR कोड दिखाएं।
+</span>
+
+<span class="lang mr">
+खरेदी केंद्रावर हा QR कोड दाखवा.
+</span>
+
+</p>
+
+
+<div id="qrcode"></div>
+
+
+<h3>KQ-127</h3>
+
+<p style="margin-top:5px;color:#777;">
+Farmer Token • Wheat • 450 kg
+</p>
+
+
+<button onclick="downloadQR()">
+
+📥
+<span class="lang en active">Save QR</span>
+<span class="lang hi">QR सेव करें</span>
+<span class="lang mr">QR सेव्ह करा</span>
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= PAYMENT ================= -->
+
+<div class="section">
+
+<h2 class="section-title">
+
+<span class="lang en active">
+💰 Payment Tracking
+</span>
+
+<span class="lang hi">
+💰 भुगतान स्थिति
+</span>
+
+<span class="lang mr">
+💰 पेमेंट स्थिती
+</span>
+
+</h2>
+
+
+<div class="payment">
+
+
+<div class="payment-row">
+
+<span>
+<span class="lang en active">Crop Value</span>
+<span class="lang hi">फसल मूल्य</span>
+<span class="lang mr">पिकाची किंमत</span>
+</span>
+
+<strong>₹18,500</strong>
+
+</div>
+
+
+<div class="payment-row">
+
+<span>
+<span class="lang en active">Procurement Status</span>
+<span class="lang hi">खरीद स्थिति</span>
+<span class="lang mr">खरेदी स्थिती</span>
+</span>
+
+<strong class="pending">
+
+<span class="lang en active">Processing</span>
+<span class="lang hi">प्रक्रिया में</span>
+<span class="lang mr">प्रक्रिया सुरू</span>
+
+</strong>
+
+</div>
+
+
+<div class="payment-row">
+
+<span>
+<span class="lang en active">Payment</span>
+<span class="lang hi">भुगतान</span>
+<span class="lang mr">पेमेंट</span>
+</span>
+
+<strong class="pending">
+
+<span class="lang en active">Pending</span>
+<span class="lang hi">लंबित</span>
+<span class="lang mr">प्रलंबित</span>
+
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= ACTION ================= -->
+
+<button class="action-btn" onclick="refreshQueue()">
+
+🔄
+
+<span class="lang en active">
+Refresh Queue Status
+</span>
+
+<span class="lang hi">
+कतार अपडेट करें
+</span>
+
+<span class="lang mr">
+रांग अपडेट करा
+</span>
+
+</button>
+
+
+</div>
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<div class="bottom-nav">
+
+<button class="active"
+onclick="scrollToTop()">
+
+<div>🏠</div>
+
+<span class="lang en active">Home</span>
+<span class="lang hi">होम</span>
+<span class="lang mr">होम</span>
+
+</button>
+
+
+<button onclick="scrollToQueue()">
+
+<div>📍</div>
+
+<span class="lang en active">Queue</span>
+<span class="lang hi">कतार</span>
+<span class="lang mr">रांग</span>
+
+</button>
+
+
+<button onclick="scrollToQR()">
+
+<div>🎟️</div>
+
+<span class="lang en active">Token</span>
+<span class="lang hi">टोकन</span>
+<span class="lang mr">टोकन</span>
+
+</button>
+
+
+<button onclick="scrollToPayment()">
+
+<div>💰</div>
+
+<span class="lang en active">Payment</span>
+<span class="lang hi">भुगतान</span>
+<span class="lang mr">पेमेंट</span>
+
+</button>
+
+</div>
+
+
+<script>
+
+/* ================= LANGUAGE ================= */
+
+function changeLanguage(language){
+
+    let all = document.querySelectorAll(".lang");
+
+    all.forEach(function(item){
+        item.classList.remove("active");
+    });
+
+    let selected =
+        document.querySelectorAll(".lang."+language);
+
+    selected.forEach(function(item){
+        item.classList.add("active");
+    });
+
+
+    document
+    .querySelectorAll(".language button")
+    .forEach(function(button){
+        button.classList.remove("active");
+    });
+
+
+    if(language === "en"){
+        document.getElementById("enBtn")
+        .classList.add("active");
+    }
+
+    if(language === "hi"){
+        document.getElementById("hiBtn")
+        .classList.add("active");
+    }
+
+    if(language === "mr"){
+        document.getElementById("mrBtn")
+        .classList.add("active");
+    }
+
+}
+
+
+/* ================= QR CODE ================= */
+
+let qr = new QRCode(
+    document.getElementById("qrcode"),
+    {
+        text:
+        "KisanQueue | Token: KQ-127 | Crop: Wheat | Quantity: 450kg",
+        width:180,
+        height:180
+    }
+);
+
+
+/* ================= QUEUE DEMO ================= */
+
+let farmersAhead = 7;
+
+function refreshQueue(){
+
+    if(farmersAhead > 0){
+
+        farmersAhead--;
+
+        document.getElementById("position")
+        .innerText = farmersAhead;
+
+        document.getElementById("queueNumber")
+        .innerText = farmersAhead;
+
+        let progress =
+            68 + ((7-farmersAhead)*4);
+
+        document.getElementById("progress")
+        .style.width = progress + "%";
+
+        alert(
+            "Queue updated! " +
+            farmersAhead +
+            " farmers are ahead of you."
+        );
+
+    }else{
+
+        alert("🎉 It's your turn!");
+
+    }
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function scrollToTop(){
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+function scrollToQueue(){
+
+    document
+    .getElementById("queueSection")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+function scrollToQR(){
+
+    document
+    .getElementById("qrcode")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+function scrollToPayment(){
+
+    document
+    .querySelector(".payment")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* ================= QR SAVE ================= */
+
+function downloadQR(){
+
+    let qrImage =
+        document
+        .querySelector("#qrcode img");
+
+    if(qrImage){
+
+        let link =
+            document.createElement("a");
+
+        link.href = qrImage.src;
+
+        link.download =
+            "KisanQueue-KQ-127.png";
+
+        link.click();
+
+    }
+
+}
+
+</script>
+
+</body>
+      </html>
