@@ -4,391 +4,745 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KisanQueue - Smart Farmer Procurement</title>
+<title>KisanQueue</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-    background:#f5f8f3;
-    color:#1f2d1f;
+background:#f4f8f2;
+color:#243024;
 }
 
 /* NAVBAR */
+
 nav{
-    background:#1b5e20;
-    color:white;
-    padding:15px 6%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    position:sticky;
-    top:0;
-    z-index:100;
+background:#176b2c;
+color:white;
+padding:14px 6%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:1000;
 }
 
 .logo{
-    font-size:23px;
-    font-weight:bold;
+font-size:23px;
+font-weight:bold;
 }
 
 .logo span{
-    color:#c5e1a5;
+color:#c8e6c9;
 }
 
-nav button{
-    background:white;
-    color:#1b5e20;
-    border:none;
-    padding:9px 15px;
-    border-radius:20px;
-    font-weight:bold;
+.nav-right{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.lang-btn{
+border:1px solid #ffffff66;
+background:#ffffff18;
+color:white;
+padding:7px 9px;
+border-radius:7px;
+font-size:11px;
+}
+
+.lang-btn.active{
+background:white;
+color:#176b2c;
+}
+
+.menu-btn{
+background:white;
+color:#176b2c;
+border:0;
+padding:8px 12px;
+border-radius:7px;
+font-weight:bold;
 }
 
 /* HERO */
+
 .hero{
-    padding:55px 7%;
-    background:linear-gradient(135deg,#e8f5e9,#f1f8e9);
+padding:55px 7%;
+background:linear-gradient(135deg,#e8f5e9,#f1f8e9);
+}
+
+.hero small{
+color:#689f38;
+font-weight:bold;
 }
 
 .hero h1{
-    font-size:42px;
-    color:#1b5e20;
-    margin-bottom:12px;
+font-size:43px;
+color:#145c25;
+margin:12px 0;
 }
 
 .hero p{
-    font-size:18px;
-    max-width:600px;
-    line-height:1.6;
+max-width:620px;
+font-size:17px;
+line-height:1.6;
+color:#526052;
 }
 
-.tagline{
-    color:#689f38;
-    font-weight:bold;
-    margin-bottom:15px;
-}
-
-.hero-buttons{
-    margin-top:25px;
+.buttons{
+margin-top:25px;
 }
 
 .primary{
-    background:#2e7d32;
-    color:white;
-    border:none;
-    padding:13px 22px;
-    border-radius:8px;
-    font-size:16px;
-    margin-right:10px;
+background:#176b2c;
+color:white;
+border:0;
+padding:13px 20px;
+border-radius:9px;
+font-size:15px;
+font-weight:bold;
 }
 
 .secondary{
-    background:white;
-    color:#2e7d32;
-    border:2px solid #2e7d32;
-    padding:11px 20px;
-    border-radius:8px;
-    font-size:16px;
+background:white;
+color:#176b2c;
+border:2px solid #176b2c;
+padding:11px 18px;
+border-radius:9px;
+font-size:15px;
+font-weight:bold;
+margin-left:8px;
 }
 
 /* STATS */
+
 .stats{
-    display:flex;
-    gap:15px;
-    padding:25px 7%;
-    flex-wrap:wrap;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+padding:25px 7%;
 }
 
 .stat{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    flex:1;
-    min-width:150px;
-    box-shadow:0 2px 8px #ddd;
-    text-align:center;
+background:white;
+padding:20px;
+text-align:center;
+border-radius:13px;
+box-shadow:0 2px 8px #0001;
 }
 
 .stat h2{
-    color:#2e7d32;
+color:#176b2c;
+font-size:28px;
 }
 
-/* SECTION */
+/* SECTIONS */
+
 section{
-    padding:40px 7%;
+padding:40px 7%;
 }
 
-.section-title{
-    text-align:center;
-    margin-bottom:25px;
+.title{
+text-align:center;
+margin-bottom:25px;
 }
 
-.section-title h2{
-    color:#1b5e20;
+.title h2{
+color:#145c25;
+margin-bottom:5px;
+}
+
+.title p{
+color:#667085;
 }
 
 /* FEATURES */
+
 .features{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:18px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:18px;
 }
 
 .card{
-    background:white;
-    padding:22px;
-    border-radius:14px;
-    box-shadow:0 2px 8px #ddd;
+background:white;
+padding:22px;
+border-radius:14px;
+box-shadow:0 2px 8px #0001;
 }
 
-.card .icon{
-    font-size:32px;
-    margin-bottom:10px;
+.icon{
+font-size:32px;
+margin-bottom:10px;
 }
 
 .card h3{
-    margin-bottom:8px;
-    color:#2e7d32;
+color:#176b2c;
+margin-bottom:7px;
 }
 
-/* FORM */
-.form-box{
-    background:white;
-    max-width:600px;
-    margin:auto;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 3px 12px #ddd;
+.card p{
+font-size:14px;
+color:#667085;
+line-height:1.5;
 }
 
-.form-box input,
-.form-box select{
-    width:100%;
-    padding:13px;
-    margin:8px 0 15px;
-    border:1px solid #ccc;
-    border-radius:7px;
+/* BOOKING */
+
+.booking-box{
+max-width:650px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 3px 12px #0001;
 }
 
-.form-box button{
-    width:100%;
-    padding:13px;
-    background:#2e7d32;
-    color:white;
-    border:none;
-    border-radius:7px;
-    font-size:16px;
+.booking-box label{
+display:block;
+font-size:14px;
+font-weight:bold;
+margin-top:12px;
 }
 
-/* QUEUE */
-.queue-box{
-    max-width:600px;
-    margin:auto;
-    background:white;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 3px 12px #ddd;
+.booking-box input,
+.booking-box select{
+width:100%;
+padding:13px;
+margin-top:6px;
+border:1px solid #ccd3cc;
+border-radius:8px;
+font-size:14px;
 }
 
-.queue-number{
-    font-size:45px;
-    color:#2e7d32;
-    font-weight:bold;
-    text-align:center;
-    margin:15px;
+.booking-box button{
+width:100%;
+margin-top:20px;
 }
 
-.progress{
-    height:14px;
-    background:#ddd;
-    border-radius:20px;
-    overflow:hidden;
-    margin:15px 0;
+/* DASHBOARD */
+
+#dashboard{
+display:none;
 }
 
-.progress div{
-    width:65%;
-    height:100%;
-    background:#66bb6a;
+.dashboard{
+max-width:900px;
+margin:auto;
 }
 
-/* STATUS */
-.status{
-    display:flex;
-    justify-content:space-between;
-    margin-top:25px;
-    gap:8px;
+.welcome{
+margin-bottom:20px;
 }
 
-.step{
-    text-align:center;
-    flex:1;
-    font-size:12px;
+.welcome h2{
+color:#145c25;
 }
 
-.step span{
-    display:block;
-    background:#2e7d32;
-    color:white;
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    margin:auto auto 6px;
-    padding-top:7px;
+.welcome p{
+color:#667085;
+margin-top:5px;
+}
+
+/* ALERT */
+
+.alert{
+background:#e8f5e9;
+border-left:5px solid #2e7d32;
+padding:15px;
+border-radius:10px;
+margin-bottom:18px;
 }
 
 /* TOKEN */
-.token{
-    text-align:center;
-    border:2px dashed #2e7d32;
-    padding:25px;
-    margin-top:20px;
-    border-radius:12px;
+
+.token-card{
+background:linear-gradient(135deg,#176b2c,#2e8b3d);
+color:white;
+border-radius:18px;
+padding:25px;
+text-align:center;
+box-shadow:0 5px 15px #0002;
 }
 
-.token h2{
-    color:#1b5e20;
+.token-label{
+font-size:13px;
+}
+
+.token-number{
+font-size:43px;
+font-weight:bold;
+margin:8px 0;
+letter-spacing:2px;
+}
+
+.token-info{
+display:flex;
+justify-content:space-around;
+margin-top:18px;
+}
+
+.token-info strong{
+display:block;
+font-size:18px;
+margin-top:5px;
+}
+
+/* DASH GRID */
+
+.dash-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-top:18px;
+}
+
+.info-card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 2px 8px #0001;
+}
+
+.info-card h3{
+color:#176b2c;
+margin-bottom:8px;
+}
+
+.info-card p{
+color:#667085;
+font-size:14px;
+}
+
+/* QUEUE */
+
+.queue-card{
+background:white;
+padding:22px;
+border-radius:15px;
+box-shadow:0 2px 8px #0001;
+}
+
+.position{
+text-align:center;
+font-size:40px;
+font-weight:bold;
+color:#176b2c;
+}
+
+.center{
+text-align:center;
+color:#667085;
+}
+
+.progress-bg{
+height:14px;
+background:#e0e0e0;
+border-radius:20px;
+overflow:hidden;
+margin:18px 0;
+}
+
+.progress{
+height:100%;
+width:65%;
+background:#4caf50;
+transition:.5s;
+}
+
+/* STATUS */
+
+.status-card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 2px 8px #0001;
+}
+
+.status{
+display:flex;
+align-items:center;
+gap:12px;
+margin:15px 0;
+}
+
+.circle{
+height:35px;
+width:35px;
+border-radius:50%;
+background:#e0e0e0;
+display:flex;
+justify-content:center;
+align-items:center;
+font-weight:bold;
+}
+
+.status.done .circle{
+background:#176b2c;
+color:white;
+}
+
+.status.active .circle{
+background:#8bc34a;
+color:white;
+}
+
+.status-text strong{
+display:block;
+}
+
+.status-text small{
+color:#777;
+}
+
+/* QR */
+
+.qr-card{
+background:white;
+padding:25px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 2px 8px #0001;
+}
+
+#qrcode{
+display:flex;
+justify-content:center;
+margin:20px 0;
+}
+
+.qr-btn{
+background:#176b2c;
+color:white;
+border:0;
+padding:11px 18px;
+border-radius:8px;
+}
+
+/* PAYMENT */
+
+.payment{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 2px 8px #0001;
+}
+
+.payment-row{
+display:flex;
+justify-content:space-between;
+padding:13px 0;
+border-bottom:1px solid #eee;
+}
+
+.pending{
+color:#e65100;
+font-weight:bold;
+}
+
+/* BACK BUTTON */
+
+.back{
+margin-bottom:18px;
+background:white;
+border:1px solid #ccc;
+padding:9px 14px;
+border-radius:8px;
 }
 
 /* FOOTER */
+
 footer{
-    background:#1b5e20;
-    color:white;
-    text-align:center;
-    padding:25px;
-    margin-top:30px;
+background:#145c25;
+color:white;
+text-align:center;
+padding:30px 15px;
+margin-top:20px;
 }
 
-/* HIDDEN */
-.hidden{
-    display:none;
+footer p{
+margin-top:7px;
+font-size:13px;
 }
 
 /* MOBILE */
-@media(max-width:600px){
-    .hero h1{
-        font-size:32px;
-    }
 
-    .hero p{
-        font-size:16px;
-    }
+@media(max-width:700px){
 
-    nav{
-        padding:13px 5%;
-    }
-
-    .status{
-        flex-wrap:wrap;
-    }
-
-    .step{
-        min-width:28%;
-        margin-bottom:12px;
-    }
+.hero{
+padding:40px 5%;
 }
+
+.hero h1{
+font-size:33px;
+}
+
+.hero p{
+font-size:15px;
+}
+
+.stats{
+padding:20px 5%;
+gap:8px;
+}
+
+.stat{
+padding:15px 5px;
+}
+
+.stat h2{
+font-size:22px;
+}
+
+.stat p{
+font-size:11px;
+}
+
+section{
+padding:32px 5%;
+}
+
+.features{
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.card{
+padding:16px;
+}
+
+.card .icon{
+font-size:26px;
+}
+
+.card h3{
+font-size:14px;
+}
+
+.card p{
+font-size:12px;
+}
+
+.dash-grid{
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.info-card{
+padding:15px;
+}
+
+.token-number{
+font-size:37px;
+}
+
+nav{
+padding:12px 4%;
+}
+
+.logo{
+font-size:19px;
+}
+
+.secondary{
+margin-left:0;
+margin-top:10px;
+}
+
+.buttons button{
+width:100%;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
+
 <!-- NAVBAR -->
+
 <nav>
-    <div class="logo">🌾 Kisan<span>Queue</span></div>
-    <button onclick="showSection('register')">Register</button>
+
+<div class="logo">
+🌾 Kisan<span>Queue</span>
+</div>
+
+<div class="nav-right">
+
+<button class="lang-btn active"
+id="enBtn"
+onclick="language('en')">
+EN
+</button>
+
+<button class="lang-btn"
+id="hiBtn"
+onclick="language('hi')">
+हिं
+</button>
+
+<button class="lang-btn"
+id="mrBtn"
+onclick="language('mr')">
+मर
+</button>
+
+<button class="menu-btn"
+onclick="showHome()">
+Home
+</button>
+
+</div>
+
 </nav>
 
 
-<!-- HERO -->
+<!-- ================= HOME ================= -->
+
+<div id="home">
+
+
 <div class="hero">
 
-    <div class="tagline">SMART FARMER PROCUREMENT SYSTEM</div>
+<small>
+SMART FARMER PROCUREMENT SYSTEM
+</small>
 
-    <h1>Know Before You Go.</h1>
+<h1>
+<span class="en">Know Before You Go.</span>
+<span class="hi">जाने से पहले जानें।</span>
+<span class="mr">जाण्यापूर्वी माहिती मिळवा.</span>
+</h1>
 
-    <p>
-        Book your procurement slot, get a digital token,
-        track your live queue and know your estimated waiting time.
-    </p>
+<p>
 
-    <div class="hero-buttons">
-        <button class="primary" onclick="showSection('register')">
-            📅 Book Your Slot
-        </button>
+<span class="en">
+Book your procurement slot, receive a digital token,
+track your live queue and know your estimated waiting time.
+</span>
 
-        <button class="secondary" onclick="showSection('queue')">
-            📍 Track My Queue
-        </button>
-    </div>
+<span class="hi">
+अपना खरीद स्लॉट बुक करें, डिजिटल टोकन प्राप्त करें,
+लाइव कतार देखें और प्रतीक्षा समय जानें।
+</span>
+
+<span class="mr">
+खरेदी स्लॉट बुक करा, डिजिटल टोकन मिळवा,
+लाईव्ह रांग आणि प्रतीक्षा वेळ जाणून घ्या.
+</span>
+
+</p>
+
+<div class="buttons">
+
+<button class="primary"
+onclick="showBooking()">
+
+📅
+<span class="en">Book Your Slot</span>
+<span class="hi">स्लॉट बुक करें</span>
+<span class="mr">स्लॉट बुक करा</span>
+
+</button>
+
+<button class="secondary"
+onclick="showDashboard()">
+
+📍
+<span class="en">Farmer Dashboard</span>
+<span class="hi">किसान डैशबोर्ड</span>
+<span class="mr">शेतकरी डॅशबोर्ड</span>
+
+</button>
+
+</div>
 
 </div>
 
 
 <!-- STATS -->
+
 <div class="stats">
 
-    <div class="stat">
-        <h2>15–30</h2>
-        <p>Min Target Wait</p>
-    </div>
+<div class="stat">
+<h2>15–30</h2>
+<p>Min Target Wait</p>
+</div>
 
-    <div class="stat">
-        <h2>100%</h2>
-        <p>Transparency</p>
-    </div>
+<div class="stat">
+<h2>100%</h2>
+<p>Transparency</p>
+</div>
 
-    <div class="stat">
-        <h2>0</h2>
-        <p>Surprise Queues</p>
-    </div>
+<div class="stat">
+<h2>0</h2>
+<p>Surprise Queues</p>
+</div>
 
 </div>
 
 
 <!-- FEATURES -->
+
 <section>
 
-<div class="section-title">
-    <h2>How KisanQueue Helps Farmers</h2>
-    <p>Everything you need in one simple platform.</p>
+<div class="title">
+
+<h2>
+<span class="en">Everything in One Place</span>
+<span class="hi">सब कुछ एक जगह</span>
+<span class="mr">सर्व काही एका ठिकाणी</span>
+</h2>
+
+<p>
+KisanQueue makes procurement simple and predictable.
+</p>
+
 </div>
+
 
 <div class="features">
 
 <div class="card">
 <div class="icon">👨‍🌾</div>
 <h3>Farmer Registration</h3>
-<p>Simple digital registration with name, phone and location.</p>
+<p>Simple registration using name, phone and location.</p>
 </div>
 
 <div class="card">
 <div class="icon">🌾</div>
 <h3>Crop Details</h3>
-<p>Add crop type, quantity and quality grade.</p>
+<p>Add crop type, quantity and quality information.</p>
 </div>
 
 <div class="card">
 <div class="icon">📅</div>
-<h3>Smart Slot Booking</h3>
-<p>Choose an available procurement slot.</p>
+<h3>Smart Slot</h3>
+<p>Select an available procurement time slot.</p>
 </div>
 
 <div class="card">
 <div class="icon">🎟️</div>
 <h3>Digital Token</h3>
-<p>Get a unique digital token for your visit.</p>
+<p>Get a unique token with QR code.</p>
 </div>
 
 <div class="card">
 <div class="icon">📍</div>
 <h3>Live Queue</h3>
-<p>See your position and estimated waiting time.</p>
+<p>Know your queue position and waiting time.</p>
 </div>
 
 <div class="card">
@@ -398,30 +752,59 @@ footer{
 </div>
 
 </div>
+
 </section>
 
 
-<!-- REGISTRATION -->
-<section id="register">
+<!-- BOOKING -->
 
-<div class="section-title">
-<h2>👨‍🌾 Farmer Registration</h2>
-<p>Create your booking in a few simple steps.</p>
+<section id="booking">
+
+<div class="title">
+
+<h2>
+<span class="en">🌾 Farmer Registration & Booking</span>
+<span class="hi">🌾 किसान पंजीकरण और बुकिंग</span>
+<span class="mr">🌾 शेतकरी नोंदणी आणि बुकिंग</span>
+</h2>
+
+<p>
+Complete your booking to generate a digital token.
+</p>
+
 </div>
 
-<div class="form-box">
+
+<div class="booking-box">
 
 <label>Farmer Name</label>
-<input id="name" type="text" placeholder="Enter your name">
+
+<input
+id="farmerName"
+type="text"
+placeholder="Enter your name">
+
 
 <label>Mobile Number</label>
-<input id="phone" type="tel" placeholder="Enter mobile number">
 
-<label>Location</label>
-<input id="location" type="text" placeholder="Village / City">
+<input
+id="mobile"
+type="tel"
+placeholder="Enter mobile number">
+
+
+<label>Village / Location</label>
+
+<input
+id="location"
+type="text"
+placeholder="Enter village or city">
+
 
 <label>Crop Type</label>
+
 <select id="crop">
+
 <option value="">Select Crop</option>
 <option>Wheat</option>
 <option>Rice</option>
@@ -429,299 +812,722 @@ footer{
 <option>Soybean</option>
 <option>Maize</option>
 <option>Other</option>
+
 </select>
 
+
 <label>Quantity (kg)</label>
-<input id="quantity" type="number" placeholder="Enter quantity">
+
+<input
+id="quantity"
+type="number"
+placeholder="Enter quantity">
+
 
 <label>Preferred Slot</label>
+
 <select id="slot">
+
 <option>09:00 AM – 10:00 AM</option>
 <option>10:00 AM – 11:00 AM</option>
 <option>11:00 AM – 12:00 PM</option>
 <option>02:00 PM – 03:00 PM</option>
 <option>03:00 PM – 04:00 PM</option>
+
 </select>
 
-<button onclick="generateToken()">
-    Generate Digital Token
+
+<button
+class="primary"
+onclick="createBooking()">
+
+🎟️ Generate Digital Token
+
 </button>
 
 </div>
+
 </section>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div id="dashboard">
+
+<section>
+
+<div class="dashboard">
+
+<button
+class="back"
+onclick="showHome()">
+← Back to Home
+</button>
+
+
+<div class="welcome">
+
+<h2>
+👨‍🌾
+<span class="en">Farmer Dashboard</span>
+<span class="hi">किसान डैशबोर्ड</span>
+<span class="mr">शेतकरी डॅशबोर्ड</span>
+</h2>
+
+<p id="welcomeText">
+Welcome, Farmer
+</p>
+
+</div>
+
+
+<!-- ALERT -->
+
+<div class="alert">
+
+<strong>
+🔔
+<span class="en">Your turn is approaching!</span>
+<span class="hi">आपकी बारी आने वाली है!</span>
+<span class="mr">तुमची पाळी लवकरच येणार आहे!</span>
+</strong>
+
+<p style="margin-top:5px;font-size:13px;">
+
+<span class="en">
+Please reach the procurement centre within 15 minutes.
+</span>
+
+<span class="hi">
+कृपया 15 मिनट के अंदर खरीद केंद्र पहुँचें।
+</span>
+
+<span class="mr">
+कृपया 15 मिनिटांच्या आत खरेदी केंद्रावर पोहोचा.
+</span>
+
+</p>
+
+</div>
 
 
 <!-- TOKEN -->
-<section id="tokenSection" class="hidden">
 
-<div class="section-title">
-<h2>🎟️ Your Digital Token</h2>
+<div class="token-card">
+
+<div class="token-label">
+YOUR DIGITAL TOKEN
 </div>
 
-<div class="queue-box">
-
-<div class="token">
-
-<h2>KisanQueue</h2>
-
-<p>Your Token Number</p>
-
-<div class="queue-number" id="tokenNumber">
-KQ-001
+<div
+class="token-number"
+id="tokenNumber">
+KQ-127
 </div>
 
-<p id="farmerDetails"></p>
+<p id="tokenCrop">
+🌾 Wheat • 450 kg
+</p>
 
-<br>
+<div class="token-info">
 
-<p><b>Estimated Wait:</b> 22 minutes</p>
+<div>
+Queue Position
+<strong id="queuePosition">7</strong>
+</div>
 
-<p><b>Farmers Ahead:</b> 6</p>
+<div>
+Wait Time
+<strong id="waitTime">22 min</strong>
+</div>
 
 </div>
 
-<br>
+</div>
 
-<button class="primary"
-onclick="showSection('queue')">
-Track Live Queue
+
+<!-- QUICK INFO -->
+
+<div class="dash-grid">
+
+<div class="info-card">
+
+<h3>📅 Slot</h3>
+
+<p id="dashboardSlot">
+10:00 AM – 11:00 AM
+</p>
+
+</div>
+
+
+<div class="info-card">
+
+<h3>📍 Centre</h3>
+
+<p>
+Krishi Procurement Centre
+</p>
+
+</div>
+
+
+<div class="info-card">
+
+<h3>🌾 Crop</h3>
+
+<p id="dashboardCrop">
+Wheat
+</p>
+
+</div>
+
+
+<div class="info-card">
+
+<h3>⚖️ Quantity</h3>
+
+<p id="dashboardQuantity">
+450 kg
+</p>
+
+</div>
+
+</div>
+
+
+<!-- QUEUE -->
+
+<div style="margin-top:25px">
+
+<h2 class="title">
+📍 Live Queue
+</h2>
+
+
+<div class="queue-card">
+
+<div
+class="position"
+id="livePosition">
+7
+</div>
+
+<p class="center">
+Farmers ahead of you
+</p>
+
+
+<div class="progress-bg">
+
+<div
+class="progress"
+id="progress">
+</div>
+
+</div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+font-size:13px;
+">
+
+<span>
+Currently Serving:
+<strong>KQ-120</strong>
+</span>
+
+<span>
+Your Token:
+<strong id="queueToken">
+KQ-127
+</strong>
+</span>
+
+</div>
+
+
+<button
+class="primary"
+style="width:100%;margin-top:18px"
+onclick="refreshQueue()">
+
+🔄 Refresh Queue
+
 </button>
 
 </div>
 
-</section>
-
-
-<!-- LIVE QUEUE -->
-<section id="queue">
-
-<div class="section-title">
-
-<h2>📍 Live Queue Tracking</h2>
-
-<p>Real-time queue status</p>
-
 </div>
 
-<div class="queue-box">
 
-<p><b>Your Token</b></p>
+<!-- STATUS -->
 
-<div class="queue-number" id="queueToken">
-KQ-001
+<div style="margin-top:25px">
+
+<h2 class="title">
+🚜 Procurement Status
+</h2>
+
+
+<div class="status-card">
+
+
+<div class="status done">
+<div class="circle">✓</div>
+
+<div class="status-text">
+<strong>Booked</strong>
+<small>Slot confirmed</small>
+</div>
 </div>
 
-<p style="text-align:center">
-Currently serving: <b>KQ-095</b>
-</p>
 
-<p style="text-align:center">
-Farmers ahead: <b id="ahead">6</b>
-</p>
+<div class="status done">
+<div class="circle">✓</div>
 
-<div class="progress">
-<div></div>
+<div class="status-text">
+<strong>Arrived</strong>
+<small>Centre arrival</small>
+</div>
 </div>
 
-<p style="text-align:center">
-⏱️ Estimated waiting time: <b>22 minutes</b>
-</p>
+
+<div class="status active">
+<div class="circle">3</div>
+
+<div class="status-text">
+<strong>Weighing</strong>
+<small>Currently processing</small>
+</div>
+</div>
 
 
 <div class="status">
+<div class="circle">4</div>
 
-<div class="step">
-<span>✓</span>
-Booked
+<div class="status-text">
+<strong>Quality Check</strong>
+<small>Pending</small>
+</div>
 </div>
 
-<div class="step">
-<span>2</span>
-Arrived
+
+<div class="status">
+<div class="circle">5</div>
+
+<div class="status-text">
+<strong>Accepted</strong>
+<small>Pending</small>
+</div>
 </div>
 
-<div class="step">
-<span>3</span>
-Weighing
+
+<div class="status">
+<div class="circle">₹</div>
+
+<div class="status-text">
+<strong>Paid</strong>
+<small>Payment pending</small>
+</div>
 </div>
 
-<div class="step">
-<span>4</span>
-Quality
-</div>
-
-<div class="step">
-<span>5</span>
-Accepted
-</div>
 
 </div>
 
 </div>
-</section>
+
+
+<!-- QR -->
+
+<div style="margin-top:25px">
+
+<h2 class="title">
+🎟️ Digital QR Token
+</h2>
+
+
+<div class="qr-card">
+
+<p>
+Show this QR code at the procurement centre.
+</p>
+
+
+<div id="qrcode"></div>
+
+
+<h3 id="qrToken">
+KQ-127
+</h3>
+
+<p style="color:#777;margin-top:5px">
+Farmer Token
+</p>
+
+
+<button
+class="qr-btn"
+onclick="saveQR()">
+
+📥 Save QR
+
+</button>
+
+</div>
+
+</div>
 
 
 <!-- PAYMENT -->
-<section>
 
-<div class="section-title">
+<div style="margin-top:25px">
 
-<h2>💰 Payment Tracking</h2>
+<h2 class="title">
+💰 Payment Tracking
+</h2>
 
-<p>End-to-end procurement transparency</p>
+
+<div class="payment">
+
+
+<div class="payment-row">
+
+<span>Crop Value</span>
+
+<strong id="cropValue">
+₹18,500
+</strong>
 
 </div>
 
-<div class="queue-box">
 
-<p><b>Procurement Status</b></p>
+<div class="payment-row">
 
-<br>
+<span>Procurement Status</span>
 
-<p>Crop: <span id="paymentCrop">Not booked</span></p>
+<strong class="pending">
+Processing
+</strong>
 
-<p>Quantity: <span id="paymentQuantity">--</span></p>
+</div>
 
-<br>
 
-<p>
-Status:
-<b style="color:#2e7d32">
-Payment Pending
-</b>
-</p>
+<div class="payment-row">
 
-<br>
+<span>Payment</span>
 
-<p>
-Your payment information will appear here
-after procurement is completed.
-</p>
+<strong class="pending">
+Pending
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
 
 </div>
 
 </section>
 
+</div>
+
 
 <!-- FOOTER -->
+
 <footer>
 
 <h3>🌾 KisanQueue</h3>
 
-<p>From waiting in queues to knowing your queue.</p>
+<p>
+From waiting in queues to knowing your queue.
+</p>
 
-<p>Empowering India's Farmers, One Smart Slot at a Time.</p>
+<p>
+Empowering India's Farmers, One Smart Slot at a Time.
+</p>
 
 </footer>
 
 
 <script>
 
-/* SHOW SECTION */
+/* ================= LANGUAGE ================= */
 
-function showSection(id){
+function language(lang){
 
-    document.getElementById(id)
-    .scrollIntoView({
-        behavior:"smooth"
-    });
+document.querySelectorAll(".en,.hi,.mr")
+.forEach(function(el){
 
-}
+el.style.display="none";
 
+});
 
-/* GENERATE TOKEN */
+document.querySelectorAll("."+lang)
+.forEach(function(el){
 
-function generateToken(){
+el.style.display="inline";
 
-    let name =
-    document.getElementById("name").value;
-
-    let phone =
-    document.getElementById("phone").value;
-
-    let location =
-    document.getElementById("location").value;
-
-    let crop =
-    document.getElementById("crop").value;
-
-    let quantity =
-    document.getElementById("quantity").value;
-
-    if(name === "" ||
-       phone === "" ||
-       location === "" ||
-       crop === "" ||
-       quantity === ""){
-
-        alert("Please fill all details.");
-
-        return;
-    }
+});
 
 
-    /* Random demo token */
+document.querySelectorAll(".lang-btn")
+.forEach(function(btn){
 
-    let number =
-    Math.floor(Math.random()*900)+100;
+btn.classList.remove("active");
 
-    let token =
-    "KQ-" + number;
-
-
-    document.getElementById("tokenNumber")
-    .innerText = token;
-
-    document.getElementById("queueToken")
-    .innerText = token;
+});
 
 
-    document.getElementById("farmerDetails")
-    .innerText =
-    name + " • " + crop +
-    " • " + quantity + " kg";
+if(lang==="en")
+document.getElementById("enBtn")
+.classList.add("active");
 
+if(lang==="hi")
+document.getElementById("hiBtn")
+.classList.add("active");
 
-    document.getElementById("paymentCrop")
-    .innerText = crop;
-
-    document.getElementById("paymentQuantity")
-    .innerText =
-    quantity + " kg";
-
-
-    document.getElementById("tokenSection")
-    .classList.remove("hidden");
-
-
-    alert(
-        "Token generated successfully! Your token is " + token
-    );
-
-
-    showSection("tokenSection");
+if(lang==="mr")
+document.getElementById("mrBtn")
+.classList.add("active");
 
 }
 
 
-/* DEMO LIVE QUEUE */
+/* ================= BOOKING ================= */
 
-let farmersAhead = 6;
+function showBooking(){
 
-setInterval(function(){
+document.getElementById("booking")
+.scrollIntoView({
+behavior:"smooth"
+});
 
-    if(farmersAhead > 0){
+}
 
-        farmersAhead--;
 
-        document.getElementById("ahead")
-        .innerText = farmersAhead;
+function createBooking(){
 
-    }
+let name =
+document.getElementById("farmerName").value;
 
-},15000);
+let mobile =
+document.getElementById("mobile").value;
+
+let location =
+document.getElementById("location").value;
+
+let crop =
+document.getElementById("crop").value;
+
+let quantity =
+document.getElementById("quantity").value;
+
+let slot =
+document.getElementById("slot").value;
+
+
+if(
+name==="" ||
+mobile==="" ||
+location==="" ||
+crop==="" ||
+quantity===""
+){
+
+alert("Please fill all details.");
+
+return;
+
+}
+
+
+/* Generate Token */
+
+let token =
+"KQ-" +
+Math.floor(Math.random()*900+100);
+
+
+/* Update Dashboard */
+
+document.getElementById("tokenNumber")
+.innerText=token;
+
+document.getElementById("queueToken")
+.innerText=token;
+
+document.getElementById("qrToken")
+.innerText=token;
+
+document.getElementById("tokenCrop")
+.innerText=
+"🌾 "+crop+" • "+quantity+" kg";
+
+document.getElementById("dashboardCrop")
+.innerText=crop;
+
+document.getElementById("dashboardQuantity")
+.innerText=
+quantity+" kg";
+
+document.getElementById("dashboardSlot")
+.innerText=slot;
+
+document.getElementById("welcomeText")
+.innerText=
+"Welcome, "+name+" 👋";
+
+
+/* QR */
+
+document.getElementById("qrcode")
+.innerHTML="";
+
+
+new QRCode(
+document.getElementById("qrcode"),
+{
+text:
+"KisanQueue | Token: "+token+
+" | Farmer: "+name+
+" | Crop: "+crop+
+" | Quantity: "+quantity+" kg",
+width:180,
+height:180
+}
+);
+
+
+/* Show Dashboard */
+
+showDashboard();
+
+alert(
+"🎉 Booking successful!\nYour token is "+token
+);
+
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function showDashboard(){
+
+document.getElementById("home")
+.style.display="none";
+
+document.getElementById("dashboard")
+.style.display="block";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+function showHome(){
+
+document.getElementById("dashboard")
+.style.display="none";
+
+document.getElementById("home")
+.style.display="block";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* ================= LIVE QUEUE ================= */
+
+let position=7;
+
+function refreshQueue(){
+
+if(position>0){
+
+position--;
+
+document.getElementById("queuePosition")
+.innerText=position;
+
+document.getElementById("livePosition")
+.innerText=position;
+
+
+/* Update progress */
+
+let progress =
+65+(7-position)*5;
+
+document.getElementById("progress")
+.style.width=
+progress+"%";
+
+
+if(position===0){
+
+alert(
+"🎉 It's your turn! Please proceed to the counter."
+);
+
+}else{
+
+alert(
+"Queue updated!\n"+
+position+
+" farmers are ahead of you."
+);
+
+}
+
+}else{
+
+alert(
+"🎉 It's your turn!"
+);
+
+}
+
+}
+
+
+/* ================= QR SAVE ================= */
+
+function saveQR(){
+
+let image =
+document.querySelector("#qrcode img");
+
+if(image){
+
+let link =
+document.createElement("a");
+
+link.href=image.src;
+
+link.download=
+"KisanQueue-QR.png";
+
+link.click();
+
+}
+
+}
 
 </script>
 
 </body>
-</html>
+    </html>
