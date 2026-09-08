@@ -1112,7 +1112,7 @@ onclick="refreshQueue()">
 
 <div class="status-text">
 <strong>Quality Check</strong>
-<small>Pending</small>
+<small id="payment Status">Pending</small>
 </div>
 </div>
 
@@ -1310,114 +1310,434 @@ behavior:"smooth"
 });
 
 }
+async function createBooking(){
+
+    let name =
+    document.getElementById("farmerName").value.trim();
+
+    let mobile =
+    document.getElementById("mobile").value.trim();
+
+    let location =
+    document.getElementById("location").value.trim();
+
+    let crop =
+    document.getElementById("crop").value;
+
+    let quantity =
+    document.getElementById("quantity").value;
+
+    let slot =
+    document.getElementById("slot").value;
 
 
-async function createBooking() {
+    /* CHECK DETAILS */
 
-  let name = document.getElementById("farmerName").value.trim();
-  let mobile = document.getElementById("mobile").value.trim();
-  let location = document.getElementById("location").value.trim();
-  let crop = document.getElementById("crop").value.trim();
-  let quantity = document.getElementById("quantity").value;
-  let slot = document.getElementById("slot").value;
+    if(
+        name === "" ||
+        mobile === "" ||
+        location === "" ||
+        crop === "" ||
+        quantity === ""
+    ){
 
-  if (
-    name === "" ||
-    mobile === "" ||
-    location === "" ||
-    crop === "" ||
-    quantity === ""
-  ) {
-    alert("Please fill all details.");
-    return;
-  }
+        alert("Please fill all details.");
+        return;
 
-  try {
-
-    // Generate token
-    let token =
-      "KQ-" +
-      Math.floor(Math.random() * 900 + 100);
-
-    // Save booking to Firestore
-    await db.collection("bookings").add({
-
-      farmerName: name,
-      phone: mobile,
-      location: location,
-      crop: crop,
-      quantity: Number(quantity),
-      slot: slot,
-      centre: location,
-
-      token: token,
-
-      status: "Booked",
-
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-
-    });
-
-    // Update dashboard
-    document.getElementById("tokenNumber").innerText = token;
-
-    document.getElementById("queueToken").innerText = token;
-
-    document.getElementById("qrToken").innerText = token;
-
-    document.getElementById("tokenCrop").innerText =
-      "🌾 " + crop + " • " + quantity + " kg";
-
-    document.getElementById("dashboardCrop").innerText =
-      crop;
-
-    document.getElementById("dashboardQuantity").innerText =
-      quantity + " kg";
-
-    document.getElementById("dashboardSlot").innerText =
-      slot;
-
-    document.getElementById("welcomeText").innerText =
-      "Welcome, " + name + " 👋";
-
-
-    // Generate QR
-    document.getElementById("qrcode").innerHTML = "";
-
-    new QRCode(
-      document.getElementById("qrcode"),
-      {
-        text:
-          "KisanQueue | Token: " + token +
-          " | Farmer: " + name +
-          " | Crop: " + crop +
-          " | Quantity: " + quantity + " kg",
-
-        width: 180,
-        height: 180
-      }
-    );
-
-
-    // Show dashboard
-    showDashboard();
-
-    alert(
-      "🎉 Booking successful!\nYour token is " + token
-    );
-
-    console.log("Booking saved to Firebase ✅");
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "❌ Booking save nahi ho paayi.\nPlease check your internet connection."
-    );
-
-  }
     }
+
+
+    /* GENERATE TOKEN */
+
+    let token =
+    "KQ-" +
+    Math.floor(Math.random() * 900 + 100);
+
+
+    try{
+
+        /* SAVE TO FIRESTORE */
+
+        const docRef =
+        await db.collection("bookings").add({
+
+            farmerName: name,
+
+            phone: mobile,
+
+            location: location,
+
+            crop: crop,
+
+            quantity: Number(quantity),
+
+            slot: slot,
+
+            centre: location,
+
+            token: token,
+
+            status: "Booked",
+
+            createdAt:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+        });
+
+
+        /* SAVE BOOKING ID */
+
+        localStorage.setItem(
+            "kisanqueueBookingId",
+            docRef.id
+        );
+
+
+        localStorage.setItem(
+            "kisanqueueToken",
+            token
+        );
+
+
+        /* UPDATE DASHBOARD */
+
+        document.getElementById("tokenNumber")
+        .innerText = token;
+
+        document.getElementById("queueToken")
+        .innerText = token;
+
+        document.getElementById("qrToken")
+        .innerText = token;
+
+
+        document.getElementById("tokenCrop")
+        .innerText =
+        "🌾 " + crop + " • " + quantity + " kg";
+
+
+        document.getElementById("dashboardCrop")
+        .innerText = crop;
+
+
+        document.getElementById("dashboardQuantity")
+        .innerText =
+        quantity + " kg";
+
+
+        document.getElementById("dashboardSlot")
+        .innerText = slot;
+
+
+        document.getElementById("welcomeText")
+        .innerText =
+        "Welcome, " + name + " 👋";
+
+
+        /* QR CODE */
+
+        document.getElementById("qrcode")
+        .innerHTML = "";
+
+
+        new QRCode(
+            document.getElementById("qrcode"),
+            {
+                text:
+                "KisanQueue | Token: " +
+                token +
+                " | Farmer: " +
+                name +
+                " | Crop: " +
+                crop +
+                " | Quantity: " +
+                quantity + " kg",
+
+                width: 180,
+                height: 180
+            }
+        );
+
+
+        /* SHOW DASHBOARD */
+
+        showDashboard();
+
+
+        alert(
+            "🎉 Booking successful!\n\n" +
+            "Your Token: " + token
+        );
+
+
+        /* START LIVE TRACKING */
+
+        startLiveTracking(docRef.id);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Booking failed ❌\n\n" +
+            error.message
+        );
+
+    }
+
+}
+  /* =========================================
+   LIVE FARMER TRACKING
+========================================= */
+
+let liveListener = null;
+
+
+function startLiveTracking(bookingId){
+
+    if(liveListener){
+        liveListener();
+    }
+
+
+    liveListener =
+    db.collection("bookings")
+    .doc(bookingId)
+    .onSnapshot(
+
+        doc => {
+
+            if(!doc.exists){
+                return;
+            }
+
+
+            const data = doc.data();
+
+
+            console.log(
+                "LIVE STATUS:",
+                data.status
+            );
+
+
+            /* UPDATE STATUS */
+
+            updateFarmerStatus(
+                data.status
+            );
+
+
+            /* UPDATE TOKEN */
+
+            if(data.token){
+
+                document.getElementById(
+                    "tokenNumber"
+                ).innerText =
+                data.token;
+
+
+                document.getElementById(
+                    "queueToken"
+                ).innerText =
+                data.token;
+
+
+                document.getElementById(
+                    "qrToken"
+                ).innerText =
+                data.token;
+
+            }
+
+
+            /* UPDATE CROP */
+
+            if(data.crop){
+
+                document.getElementById(
+                    "dashboardCrop"
+                ).innerText =
+                data.crop;
+
+            }
+
+
+            /* UPDATE QUANTITY */
+
+            if(data.quantity){
+
+                document.getElementById(
+                    "dashboardQuantity"
+                ).innerText =
+                data.quantity + " kg";
+
+            }
+
+
+            /* UPDATE SLOT */
+
+            if(data.slot){
+
+                document.getElementById(
+                    "dashboardSlot"
+                ).innerText =
+                data.slot;
+
+            }
+
+        },
+
+
+        error => {
+
+            console.error(
+                "Live tracking error:",
+                error
+            );
+
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   UPDATE FARMER STATUS
+========================================= */
+
+function updateFarmerStatus(currentStatus){
+
+    const steps = [
+
+        "Booked",
+        "Arrived",
+        "Weighing",
+        "Quality Check",
+        "Accepted",
+        "Paid"
+
+    ];
+
+
+    const currentIndex =
+    steps.indexOf(currentStatus);
+
+
+    if(currentIndex === -1){
+        return;
+    }
+
+
+    const statusElements =
+    document.querySelectorAll(
+        ".status-card .status"
+    );
+
+
+    statusElements.forEach(
+        (element,index) => {
+
+            element.classList.remove(
+                "done",
+                "active"
+            );
+
+
+            const circle =
+            element.querySelector(
+                ".circle"
+            );
+
+
+            if(index < currentIndex){
+
+                element.classList.add("done");
+
+                if(circle){
+                    circle.innerText = "✓";
+                }
+
+            }
+
+            else if(index === currentIndex){
+
+                element.classList.add("active");
+
+                if(circle){
+
+                    if(index === 5){
+                        circle.innerText = "₹";
+                    }
+                    else{
+                        circle.innerText =
+                        index + 1;
+                    }
+
+                }
+
+            }
+
+            else{
+
+                if(circle){
+
+                    if(index === 5){
+                        circle.innerText = "₹";
+                    }
+                    else{
+                        circle.innerText =
+                        index + 1;
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* UPDATE PAYMENT TEXT */
+
+    const paymentText =
+    document.getElementById(
+        "paymentStatus"
+    );
+
+
+    if(paymentText){
+
+        if(currentStatus === "Paid"){
+
+            paymentText.innerText =
+            "Payment Completed ✅";
+
+        }
+
+        else if(currentStatus === "Accepted"){
+
+            paymentText.innerText =
+            "Payment Processing";
+
+        }
+
+        else{
+
+            paymentText.innerText =
+            "Payment Pending";
+
+        }
+
+    }
+
+  }
+
+//
 /* ================= DASHBOARD ================= */
 
 function showDashboard(){
