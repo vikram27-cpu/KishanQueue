@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KisanQueue - Admin Dashboard</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f7f4;
+    color:#222;
+}
+
+/* HEADER */
+
+.header{
+    background:#16803a;
+    color:white;
+    padding:16px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.header-content{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.admin{
+    background:white;
+    color:#16803a;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+/* MAIN */
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+}
+
+.title{
+    margin-bottom:5px;
+    font-size:28px;
+}
+
+.subtitle{
+    color:#666;
+    margin-bottom:20px;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.stat h3{
+    font-size:28px;
+    margin-bottom:5px;
+}
+
+.stat p{
+    color:#666;
+}
+
+/* SEARCH */
+
+.search-box{
+    background:white;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+.search-box input{
+    width:100%;
+    padding:13px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:15px;
+}
+
+/* TABLE */
+
+.table-container{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+}
+
+th{
+    background:#16803a;
+    color:white;
+    padding:13px;
+    text-align:left;
+}
+
+td{
+    padding:13px;
+    border-bottom:1px solid #eee;
+}
+
+.token{
+    font-weight:bold;
+    color:#16803a;
+}
+
+.status{
+    padding:6px 9px;
+    border-radius:15px;
+    font-size:12px;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.booked{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.arrived{
+    background:#cfe2ff;
+    color:#084298;
+}
+
+.weighing{
+    background:#e2d9f3;
+    color:#59359a;
+}
+
+.quality{
+    background:#cff4fc;
+    color:#055160;
+}
+
+.accepted{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.paid{
+    background:#198754;
+    color:white;
+}
+
+/* SELECT */
+
+select{
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+/* LOADING */
+
+.loading{
+    text-align:center;
+    padding:40px;
+    color:#777;
+}
+
+.empty{
+    text-align:center;
+    padding:40px;
+    color:#777;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .container{
+        padding:15px;
+    }
+
+    .title{
+        font-size:23px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .stat{
+        padding:15px;
+    }
+
+    .stat h3{
+        font-size:23px;
+    }
+
+    .header-content{
+        gap:10px;
+    }
+
+    .logo{
+        font-size:19px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<div class="header-content">
+
+<div class="logo">
+🌾 KisanQueue
+</div>
+
+<div class="admin">
+ADMIN DASHBOARD
+</div>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+<h1 class="title">Admin Dashboard</h1>
+
+<p class="subtitle">
+Manage farmer bookings, tokens and procurement status
+</p>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+<h3 id="totalCount">0</h3>
+<p>Total Bookings</p>
+</div>
+
+<div class="stat">
+<h3 id="waitingCount">0</h3>
+<p>Waiting</p>
+</div>
+
+<div class="stat">
+<h3 id="completedCount">0</h3>
+<p>Completed</p>
+</div>
+
+<div class="stat">
+<h3 id="paymentCount">0</h3>
+<p>Paid</p>
+</div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="search-box">
+
+<input
+type="text"
+id="searchInput"
+placeholder="🔍 Search farmer name, token, crop or phone..."
+oninput="filterBookings()"
+>
+
+</div>
+
+
+<!-- BOOKINGS -->
+
+<div class="table-container">
+
+<div id="loading" class="loading">
+Loading bookings...
+</div>
+
+<table id="bookingTable" style="display:none;">
+
+<thead>
+
+<tr>
+
+<th>Token</th>
+<th>Farmer</th>
+<th>Phone</th>
+<th>Crop</th>
+<th>Quantity</th>
+<th>Centre</th>
+<th>Slot</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="bookingBody">
+
+</tbody>
+
+</table>
+
+<div id="empty" class="empty" style="display:none;">
+No bookings found.
+</div>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =====================================
+   FIREBASE CONFIG
+===================================== */
+
+/*
+IMPORTANT:
+
+Yaha apne index.html wala SAME firebaseConfig paste karo.
+
+Firebase Console
+→ Project Settings
+→ Your apps
+→ SDK setup and configuration
+*/
+
+const firebaseConfig = {
+
+    apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
+
+    authDomain: "kisanqueue-8b0a8.firebaseapp.com",
+
+    databaseURL:
+    "https://kisanqueue-8b0a8-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+    projectId: "kisanqueue-8b0a8",
+
+    storageBucket:
+    "kisanqueue-8b0a8.firebasestorage.app",
+
+    messagingSenderId: "716218749570",
+
+    appId: "PASTE_YOUR_FIREBASE_APP_ID",
+
+    measurementId: "G-91CCJC9CZE"
+};
+
+
+/* =====================================
+   INITIALIZE FIREBASE
+===================================== */
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+const auth = firebase.auth();
+
+let bookings = [];
+
+
+/* =====================================
+   LOGIN
+===================================== */
+
+auth.signInAnonymously()
+
+.then(() => {
+
+    console.log("Firebase Admin connected ✅");
+
+    loadBookings();
+
+})
+
+.catch(error => {
+
+    console.error(error);
+
+    document.getElementById("loading").innerHTML =
+    "Firebase connection failed ❌";
+
+});
+
+
+/* =====================================
+   LOAD BOOKINGS
+===================================== */
+
+function loadBookings(){
+
+    db.collection("bookings")
+    .orderBy("createdAt","desc")
+
+    .onSnapshot(snapshot => {
+
+        bookings = [];
+
+        snapshot.forEach(doc => {
+
+            bookings.push({
+
+                id:doc.id,
+                ...doc.data()
+
+            });
+
+        });
+
+        displayBookings(bookings);
+
+        updateStats(bookings);
+
+    },
+
+    error => {
+
+        console.error(error);
+
+        document.getElementById("loading").innerHTML =
+        "Unable to load bookings ❌<br><br>" +
+        "Check your Firestore Rules.";
+
+    });
+
+}
+
+
+/* =====================================
+   DISPLAY BOOKINGS
+===================================== */
+
+function displayBookings(data){
+
+    const table =
+    document.getElementById("bookingTable");
+
+    const body =
+    document.getElementById("bookingBody");
+
+    const loading =
+    document.getElementById("loading");
+
+    const empty =
+    document.getElementById("empty");
+
+
+    loading.style.display="none";
+
+    body.innerHTML="";
+
+
+    if(data.length===0){
+
+        table.style.display="none";
+        empty.style.display="block";
+
+        return;
+
+    }
+
+
+    table.style.display="table";
+    empty.style.display="none";
+
+
+    data.forEach(item => {
+
+        const row =
+        document.createElement("tr");
+
+
+        row.innerHTML = `
+
+        <td>
+            <span class="token">
+            ${item.token || "N/A"}
+            </span>
+        </td>
+
+        <td>
+            ${item.farmerName || "N/A"}
+        </td>
+
+        <td>
+            ${item.phone || "N/A"}
+        </td>
+
+        <td>
+            ${item.crop || "N/A"}
+        </td>
+
+        <td>
+            ${item.quantity || 0} kg
+        </td>
+
+        <td>
+            ${item.centre || item.location || "N/A"}
+        </td>
+
+        <td>
+            ${item.slot || "N/A"}
+        </td>
+
+        <td>
+
+            <select
+            onchange="updateStatus('${item.id}',this.value)"
+            >
+
+                <option value="Booked"
+                ${item.status==="Booked"?"selected":""}>
+                Booked
+                </option>
+
+                <option value="Arrived"
+                ${item.status==="Arrived"?"selected":""}>
+                Arrived
+                </option>
+
+                <option value="Weighing"
+                ${item.status==="Weighing"?"selected":""}>
+                Weighing
+                </option>
+
+                <option value="Quality Check"
+                ${item.status==="Quality Check"?"selected":""}>
+                Quality Check
+                </option>
+
+                <option value="Accepted"
+                ${item.status==="Accepted"?"selected":""}>
+                Accepted
+                </option>
+
+                <option value="Paid"
+                ${item.status==="Paid"?"selected":""}>
+                Paid
+                </option>
+
+            </select>
+
+        </td>
+
+        `;
+
+
+        body.appendChild(row);
+
+    });
+
+}
+
+
+/* =====================================
+   UPDATE STATUS
+===================================== */
+
+function updateStatus(id,newStatus){
+
+    db.collection("bookings")
+    .doc(id)
+    .update({
+
+        status:newStatus,
+
+        updatedAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    })
+
+    .then(() => {
+
+        console.log("Status updated ✅");
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert(
+        "Status update failed ❌\n\n" +
+        error.message
+        );
+
+    });
+
+}
+
+
+/* =====================================
+   STATISTICS
+===================================== */
+
+function updateStats(data){
+
+    document.getElementById("totalCount")
+    .innerText=data.length;
+
+
+    let waiting=0;
+    let completed=0;
+    let paid=0;
+
+
+    data.forEach(item => {
+
+        if(
+            item.status==="Booked" ||
+            item.status==="Arrived" ||
+            item.status==="Weighing" ||
+            item.status==="Quality Check"
+        ){
+
+            waiting++;
+
+        }
+
+
+        if(item.status==="Accepted"){
+
+            completed++;
+
+        }
+
+
+        if(item.status==="Paid"){
+
+            paid++;
+
+        }
+
+    });
+
+
+    document.getElementById("waitingCount")
+    .innerText=waiting;
+
+
+    document.getElementById("completedCount")
+    .innerText=completed;
+
+
+    document.getElementById("paymentCount")
+    .innerText=paid;
+
+}
+
+
+/* =====================================
+   SEARCH
+===================================== */
+
+function filterBookings(){
+
+    const search =
+    document.getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+
+    const filtered =
+    bookings.filter(item => {
+
+        return (
+
+            (item.farmerName || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (item.token || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (item.crop || "")
+            .toLowerCase()
+            .includes(search)
+
+            ||
+
+            (item.phone || "")
+            .toLowerCase()
+            .includes(search)
+
+        );
+
+    });
+
+
+    displayBookings(filtered);
+
+}
+
+</script>
+
+</body>
+</html>
