@@ -924,7 +924,7 @@ YOUR DIGITAL TOKEN
 <div
 class="token-number"
 id="tokenNumber">
-KQ-127
+<strong id="currentServing">—</strong>
 </div>
 
 <p id="tokenCrop">
@@ -1038,7 +1038,7 @@ font-size:13px;
 
 <span>
 Currently Serving:
-<strong>KQ-120</strong>
+<strong id="currentServing">—</strong>
 </span>
 
 <span>
@@ -1771,9 +1771,6 @@ behavior:"smooth"
 
 }
 
-
-/* ================= LIVE QUEUE ================= */
-
 let position=7;
 
 function refreshQueue(){
@@ -1824,7 +1821,377 @@ alert(
 }
 
 }
+/* =========================================
+   REAL FIRESTORE LIVE QUEUE
+========================================= */
 
+let queueListener = null;
+
+const ACTIVE_STATUSES = [
+    "Booked",
+    "Arrived",
+    "Weighing",
+    "Quality Check"
+];
+
+const SERVICE_TIME_MINUTES = 10;
+
+
+/* -----------------------------------------
+   START REAL QUEUE
+----------------------------------------- */
+
+function startRealQueue(bookingId){
+
+    if(!bookingId){
+        console.log("No booking ID found");
+        return;
+    }
+
+    if(queueListener){
+        queueListener();
+    }
+
+
+    queueListener = db
+    .collection("bookings")
+    .onSnapshot(snapshot => {
+
+        let allBookings = [];
+
+        snapshot.forEach(doc => {
+
+            allBookings.push({
+                id: doc.id,
+                ...doc.data()
+            });
+
+        });
+
+
+        updateRealQueue(
+            bookingId,
+            allBookings
+        );
+
+    }, error => {
+
+        console.error(
+            "Queue error:",
+            error
+        );
+
+    });
+
+}
+
+
+/* -----------------------------------------
+   CALCULATE REAL QUEUE
+----------------------------------------- */
+
+function updateRealQueue(
+    myBookingId,
+    allBookings
+){
+
+    const myBooking =
+    allBookings.find(
+        booking => booking.id === myBookingId
+    );
+
+
+    if(!myBooking){
+
+        console.log(
+            "Booking not found"
+        );
+
+        return;
+
+    }
+
+
+    /* -------------------------------------
+       IF BOOKING COMPLETED
+    ------------------------------------- */
+
+    if(
+        myBooking.status === "Accepted" ||
+        myBooking.status === "Paid"
+    ){
+
+        setQueueDisplay(
+            0,
+            0,
+            "Completed"
+        );
+
+        return;
+
+    }
+
+
+    /* -------------------------------------
+       SAME CENTRE + SAME SLOT
+    ------------------------------------- */
+
+    const sameQueue =
+    allBookings.filter(booking => {
+
+        return (
+
+            booking.centre === myBooking.centre &&
+
+            booking.slot === myBooking.slot &&
+
+            ACTIVE_STATUSES.includes(
+                booking.status
+            )
+
+        );
+
+    });
+
+
+    /* -------------------------------------
+       FIND FARMERS AHEAD
+    ------------------------------------- */
+
+    const farmersAhead =
+    sameQueue.filter(booking => {
+
+        if(booking.id === myBookingId){
+            return false;
+        }
+
+
+        return isEarlierBooking(
+            booking,
+            myBooking
+        );
+
+    });
+
+
+    const position =
+    farmersAhead.length;
+
+
+    /* -------------------------------------
+       REAL-TIME WAIT ESTIMATE
+       
+       Every active farmer ahead =
+       estimated 10 minutes
+    ------------------------------------- */
+
+    const waitTime =
+    position * SERVICE_TIME_MINUTES;
+
+
+    /* -------------------------------------
+       CURRENTLY SERVING
+    ------------------------------------- */
+
+    const currentlyServing =
+    sameQueue
+    .filter(booking =>
+        booking.status === "Weighing"
+    )
+    .sort(compareBookings)[0];
+
+
+    const servingToken =
+    currentlyServing
+        ? currentlyServing.token
+        : "—";
+
+
+    setQueueDisplay(
+        position,
+        waitTime,
+        servingToken
+    );
+
+
+    /* -------------------------------------
+       ALERT WHEN TURN IS NEAR
+    ------------------------------------- */
+
+    if(
+        position <= 2 &&
+        position > 0
+    ){
+
+        console.log(
+            "Your turn is approaching!"
+        );
+
+    }
+
+}
+
+
+/* -----------------------------------------
+   COMPARE BOOKING TIME
+----------------------------------------- */
+
+function compareBookings(a,b){
+
+    const timeA =
+    getBookingTime(a);
+
+    const timeB =
+    getBookingTime(b);
+
+    return timeA - timeB;
+
+}
+
+
+function getBookingTime(booking){
+
+    if(
+        booking.createdAt &&
+        typeof booking.createdAt.toMillis ===
+        "function"
+    ){
+
+        return booking.createdAt.toMillis();
+
+    }
+
+
+    return 9999999999999;
+
+}
+
+
+function isEarlierBooking(
+    bookingA,
+    bookingB
+){
+
+    return (
+        compareBookings(
+            bookingA,
+            bookingB
+        ) < 0
+    );
+
+}
+
+
+/* -----------------------------------------
+   UPDATE SCREEN
+----------------------------------------- */
+
+function setQueueDisplay(
+    position,
+    waitTime,
+    servingToken
+){
+
+    const queuePosition =
+    document.getElementById(
+        "queuePosition"
+    );
+
+    const livePosition =
+    document.getElementById(
+        "livePosition"
+    );
+
+    const wait =
+    document.getElementById(
+        "waitTime"
+    );
+
+    const currentServing =
+    document.getElementById(
+        "currentServing"
+    );
+
+
+    if(queuePosition){
+
+        queuePosition.innerText =
+        position;
+
+    }
+
+
+    if(livePosition){
+
+        livePosition.innerText =
+        position;
+
+    }
+
+
+    if(wait){
+
+        if(waitTime === 0){
+
+            wait.innerText =
+            "Your turn";
+
+        }
+        else{
+
+            wait.innerText =
+            waitTime + " min";
+
+        }
+
+    }
+
+
+    if(currentServing){
+
+        currentServing.innerText =
+        servingToken;
+
+    }
+
+
+    /* -------------------------------------
+       PROGRESS BAR
+    ------------------------------------- */
+
+    let progress;
+
+
+    if(position === 0){
+
+        progress = 100;
+
+    }
+    else{
+
+        progress =
+        Math.max(
+            5,
+            100 - (position * 10)
+        );
+
+    }
+
+
+    const progressBar =
+    document.getElementById(
+        "progress"
+    );
+
+
+    if(progressBar){
+
+        progressBar.style.width =
+        progress + "%";
+
+    }
+
+    }
 
 /* ================= QR SAVE ================= */
 
@@ -1877,6 +2244,30 @@ auth.signInAnonymously()
   .catch((error) => {
     console.error("Firebase Auth Error:", error);
   });
+    /* =========================================
+   RESTORE FARMER QUEUE AFTER RELOAD
+========================================= */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        const bookingId =
+        localStorage.getItem(
+            "kisanqueueBookingId"
+        );
+
+
+        if(bookingId){
+
+            startRealQueue(
+                bookingId
+            );
+
+        }
+
+    }
+);
 </script>
 
 </body>
