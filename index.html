@@ -1312,110 +1312,112 @@ behavior:"smooth"
 }
 
 
-function createBooking(){
+async function createBooking() {
 
-let name =
-document.getElementById("farmerName").value;
+  let name = document.getElementById("farmerName").value.trim();
+  let mobile = document.getElementById("mobile").value.trim();
+  let location = document.getElementById("location").value.trim();
+  let crop = document.getElementById("crop").value.trim();
+  let quantity = document.getElementById("quantity").value;
+  let slot = document.getElementById("slot").value;
 
-let mobile =
-document.getElementById("mobile").value;
+  if (
+    name === "" ||
+    mobile === "" ||
+    location === "" ||
+    crop === "" ||
+    quantity === ""
+  ) {
+    alert("Please fill all details.");
+    return;
+  }
 
-let location =
-document.getElementById("location").value;
+  try {
 
-let crop =
-document.getElementById("crop").value;
+    // Generate token
+    let token =
+      "KQ-" +
+      Math.floor(Math.random() * 900 + 100);
 
-let quantity =
-document.getElementById("quantity").value;
+    // Save booking to Firestore
+    await db.collection("bookings").add({
 
-let slot =
-document.getElementById("slot").value;
+      farmerName: name,
+      phone: mobile,
+      location: location,
+      crop: crop,
+      quantity: Number(quantity),
+      slot: slot,
+      centre: location,
 
+      token: token,
 
-if(
-name==="" ||
-mobile==="" ||
-location==="" ||
-crop==="" ||
-quantity===""
-){
+      status: "Booked",
 
-alert("Please fill all details.");
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
-return;
+    });
 
-}
+    // Update dashboard
+    document.getElementById("tokenNumber").innerText = token;
 
+    document.getElementById("queueToken").innerText = token;
 
-/* Generate Token */
+    document.getElementById("qrToken").innerText = token;
 
-let token =
-"KQ-" +
-Math.floor(Math.random()*900+100);
+    document.getElementById("tokenCrop").innerText =
+      "🌾 " + crop + " • " + quantity + " kg";
 
+    document.getElementById("dashboardCrop").innerText =
+      crop;
 
-/* Update Dashboard */
+    document.getElementById("dashboardQuantity").innerText =
+      quantity + " kg";
 
-document.getElementById("tokenNumber")
-.innerText=token;
+    document.getElementById("dashboardSlot").innerText =
+      slot;
 
-document.getElementById("queueToken")
-.innerText=token;
-
-document.getElementById("qrToken")
-.innerText=token;
-
-document.getElementById("tokenCrop")
-.innerText=
-"🌾 "+crop+" • "+quantity+" kg";
-
-document.getElementById("dashboardCrop")
-.innerText=crop;
-
-document.getElementById("dashboardQuantity")
-.innerText=
-quantity+" kg";
-
-document.getElementById("dashboardSlot")
-.innerText=slot;
-
-document.getElementById("welcomeText")
-.innerText=
-"Welcome, "+name+" 👋";
+    document.getElementById("welcomeText").innerText =
+      "Welcome, " + name + " 👋";
 
 
-/* QR */
+    // Generate QR
+    document.getElementById("qrcode").innerHTML = "";
 
-document.getElementById("qrcode")
-.innerHTML="";
+    new QRCode(
+      document.getElementById("qrcode"),
+      {
+        text:
+          "KisanQueue | Token: " + token +
+          " | Farmer: " + name +
+          " | Crop: " + crop +
+          " | Quantity: " + quantity + " kg",
 
-
-new QRCode(
-document.getElementById("qrcode"),
-{
-text:
-"KisanQueue | Token: "+token+
-" | Farmer: "+name+
-" | Crop: "+crop+
-" | Quantity: "+quantity+" kg",
-width:180,
-height:180
-}
-);
+        width: 180,
+        height: 180
+      }
+    );
 
 
-/* Show Dashboard */
+    // Show dashboard
+    showDashboard();
 
-showDashboard();
+    alert(
+      "🎉 Booking successful!\nYour token is " + token
+    );
 
-alert(
-"🎉 Booking successful!\nYour token is "+token
-);
+    console.log("Booking saved to Firebase ✅");
 
-}
+  } catch (error) {
 
+    console.error(error);
 
+    alert(
+      "❌ Booking save nahi ho paayi.\nPlease check your internet connection."
+    );
+
+  }
+    }
 /* ================= DASHBOARD ================= */
 
 function showDashboard(){
@@ -1527,6 +1529,34 @@ link.click();
 
 }
 
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCpnkwmw9g5GK4hqQb8WLLhxWPiRA78vYI",
+  authDomain: "kisanqueue-8b0a8.firebaseapp.com",
+  databaseURL: "https://kisanqueue-8b0a8-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "kisanqueue-8b0a8",
+  storageBucket: "kisanqueue-8b0a8.firebasestorage.app",
+  messagingSenderId: "716218749570",
+  appId: "1:716218749570:web:29842d14040de34f365a9b",
+  measurementId: "G-91CCJC9CZE"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+auth.signInAnonymously()
+  .then(() => {
+    console.log("Firebase connected ✅");
+  })
+  .catch((error) => {
+    console.error("Firebase Auth Error:", error);
+  });
 </script>
 
 </body>
