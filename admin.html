@@ -608,23 +608,74 @@ function displayBookings(data){
 /* =====================================
    UPDATE STATUS
 ===================================== */
+function updateStatus(id, newStatus){
 
-function updateStatus(id,newStatus){
+    const bookingRef =
+        db.collection("bookings").doc(id);
 
-    db.collection("bookings")
-    .doc(id)
-    .update({
 
-        status:newStatus,
+    const updateData = {
+
+        status: newStatus,
 
         updatedAt:
         firebase.firestore.FieldValue.serverTimestamp()
 
-    })
+    };
+
+
+    /* Save exact status time */
+
+    if(newStatus === "Booked"){
+
+        updateData.bookedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+    if(newStatus === "Arrived"){
+
+        updateData.arrivedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+    if(newStatus === "Weighing"){
+
+        updateData.weighingStartedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+    if(newStatus === "Quality Check"){
+
+        updateData.qualityCheckAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+    if(newStatus === "Accepted"){
+
+        updateData.acceptedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+    if(newStatus === "Paid"){
+
+        updateData.paidAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    }
+
+
+    bookingRef.update(updateData)
 
     .then(() => {
 
-        console.log("Status updated ✅");
+        console.log(
+            "Status + timestamp saved ✅"
+        );
 
     })
 
@@ -633,13 +684,14 @@ function updateStatus(id,newStatus){
         console.error(error);
 
         alert(
-        "Status update failed ❌\n\n" +
-        error.message
+            "Status update failed ❌\n\n" +
+            error.message
         );
 
     });
 
 }
+
 
 
 /* =====================================
