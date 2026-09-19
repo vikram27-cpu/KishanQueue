@@ -1834,7 +1834,7 @@ const ACTIVE_STATUSES = [
     "Quality Check"
 ];
 
-const SERVICE_TIME_MINUTES = 10;
+let averageServiceTime = 10;
 
 
 /* -----------------------------------------
@@ -1890,10 +1890,12 @@ function startRealQueue(bookingId){
    CALCULATE REAL QUEUE
 ----------------------------------------- */
 
-function updateRealQueue(
+async function updateRealQueue(
     myBookingId,
+   await calculateAverageServiceTime(
     allBookings
-){
+);
+{
 
     const myBooking =
     allBookings.find(
@@ -1986,8 +1988,9 @@ function updateRealQueue(
     ------------------------------------- */
 
     const waitTime =
-    position * SERVICE_TIME_MINUTES;
-
+Math.round(
+    position * averageServiceTime
+);
 
     /* -------------------------------------
        CURRENTLY SERVING
@@ -2263,7 +2266,87 @@ window.addEventListener(
             startRealQueue(
                 bookingId
             );
+/* =========================================
+   REAL AVERAGE PROCESSING TIME
+========================================= */
 
+async function calculateAverageServiceTime(
+    allBookings
+){
+
+    const completedBookings =
+        allBookings.filter(booking => {
+
+            return (
+
+                booking.arrivedAt &&
+                booking.acceptedAt &&
+
+                typeof booking.arrivedAt.toMillis ===
+                "function" &&
+
+                typeof booking.acceptedAt.toMillis ===
+                "function"
+
+            );
+
+        });
+
+
+    /* No historical data yet */
+
+    if(completedBookings.length === 0){
+
+        averageServiceTime = 10;
+
+        return;
+
+    }
+
+
+    let totalMinutes = 0;
+
+
+    completedBookings.forEach(
+        booking => {
+
+            const start =
+                booking.arrivedAt.toMillis();
+
+            const end =
+                booking.acceptedAt.toMillis();
+
+
+            const minutes =
+                (end - start) / 60000;
+
+
+            /* Ignore impossible values */
+
+            if(
+                minutes > 0 &&
+                minutes <= 180
+            ){
+
+                totalMinutes += minutes;
+
+            }
+
+        }
+    );
+
+
+    if(totalMinutes > 0){
+
+        averageServiceTime =
+            Math.round(
+                totalMinutes /
+                completedBookings.length
+            );
+
+    }
+
+}
         }
 
     }
